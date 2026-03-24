@@ -28,8 +28,8 @@ const Hero = () => {
             Track Parcel
           </Link>
 
-          <Link href="/services" className="btn btn-sm md:btn border-orange-500 text-orange-600 hover:bg-orange-50">
-            View Services
+          <Link href="/pricing" className="btn btn-sm md:btn border-orange-500 text-orange-600 hover:bg-orange-50">
+            View Pricing
           </Link>
 
         </div>
