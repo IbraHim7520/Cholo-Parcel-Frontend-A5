@@ -1,10 +1,10 @@
+import Hero from "@/components/CustomComponents/LandingPage/HeroPage";
 import Image from "next/image";
 
 export default function CommonPage() {
   return (
     <div>
-        Hello
-        <button className="btn btn-primary">Click me</button>
+        <Hero />
     </div>
   );
 }
