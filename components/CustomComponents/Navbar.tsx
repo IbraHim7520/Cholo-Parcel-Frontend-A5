@@ -2,11 +2,14 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Menu, X, Truck } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import NavLogo from "../ui/NavLogo";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useUser } from "@/utils/getUser";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const { user, isPending } = useUser();
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -14,6 +17,9 @@ const Navbar = () => {
     { name: "Pricing", href: "/pricing" },
     { name: "Contact", href: "/contact" },
   ];
+
+  // Optional loading state (prevents flicker)
+  if (isPending) return null;
 
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
@@ -38,20 +44,42 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right: Login Button */}
-          <div className="hidden md:flex gap-4 justify-end items-center">
-            <Link
-              href="/login"
-              className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-orange-500 transition"
-            >
-              Merchant Login
-            </Link>
-              <Link
-              href="/register"
-              className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-orange-500 transition"
-            >
-              Register
-            </Link>
+          {/* Right: Auth Section */}
+          <div className="hidden md:flex justify-end items-center gap-4 min-w-45">
+            {user ? (
+              <>
+                <span className="text-sm text-gray-700 hidden lg:block">
+                  {user.name}
+                </span>
+
+                <Avatar className="cursor-pointer">
+                  <AvatarImage
+                    src={
+                      user.image ||
+                      "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"
+                    }
+                  />
+                  <AvatarFallback>
+                    {user?.name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-orange-500 transition"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="border border-gray-300 px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-100 transition"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -67,6 +95,8 @@ const Navbar = () => {
       {isOpen && (
         <div className="md:hidden border-t border-gray-100 bg-white">
           <div className="px-4 py-4 space-y-3">
+
+            {/* Nav Links */}
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -78,18 +108,33 @@ const Navbar = () => {
               </Link>
             ))}
 
-            <Link
-              href="/login"
-              className="block text-center bg-gray-900 text-white py-2 rounded-md text-sm font-medium"
-            >
-              Merchant Login
-            </Link>
-            <Link
-              href="/register"
-              className="bg-gray-900 w-full text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-orange-500 transition"
-            >
-              Register
-            </Link>
+            {/* Auth Section Mobile */}
+            {user ? (
+              <div className="flex items-center gap-3 pt-2">
+                <Avatar>
+                  <AvatarImage src={user.image || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"}  />
+                  <AvatarFallback>
+                    {user?.name?.charAt(0)}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="text-gray-700">{user.name}</span>
+              </div>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="block text-center bg-gray-900 text-white py-2 rounded-md text-sm font-medium"
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="block text-center border border-gray-300 py-2 rounded-md text-sm font-medium hover:bg-gray-100"
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         </div>
       )}
