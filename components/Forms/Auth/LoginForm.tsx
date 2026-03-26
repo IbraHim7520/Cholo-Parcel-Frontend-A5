@@ -1,57 +1,148 @@
 "use client";
+import { env } from "@/Config/env";
+import { ILoginUser } from "@/Interfaces/auth.interface";
+import { useForm } from "@tanstack/react-form";
 import { Eye, EyeClosed } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter()
+  const LoginUserType: ILoginUser = {
+    email: "",
+    password: "",
+  }
+  const form = useForm({
+    defaultValues: LoginUserType,
+    onSubmit: async ({ value }) => {
+        try {
+          const loginData = {
+            email: value.email,
+            password: value.password
+          }
+          const loginResponse = await fetch(`${env.BACKEND_URL}/users/sign-in`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(loginData),
+          })
+          const result = await loginResponse.json();
+          if(result.success){
+            toast.success(result.message || "Login successfully.");
+            form.reset();
+            form.resetFieldMeta;
+            router.push("/")
+          }else{
+            toast.error(result.message || "Failed to login! Please try again")
+          }
+        } catch (error: any) {
+          if(error.message){
+            toast.error(error.message)
+          }else{
+            toast.error("Something went wrong! Please try again.");
+          }
+          if(env.NODE_ENV === "development"){
+            console.log(error)
+          }
+        }
+    },
+
+  })
 
   return (
-    <form className="mt-6 space-y-5 font-normal">
+    <form onSubmit={(e)=>{
+      e.preventDefault()
+      form.handleSubmit()
+    }} className="mt-6 space-y-5 font-normal">
 
       {/* Email */}
-      <div className="flex flex-col">
-        <label className="text-sm font-semibold text-gray-600 mb-1">
-          Email Address
-        </label>
-        <input
-          type="email"
-          name="email"
-          placeholder="name@company.com"
-          className="input w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 focus:border-orange-500 focus:bg-white focus:outline-none transition"
-          required
-        />
-      </div>
+      <form.Field
+        name="email"
+        validators={{
+          onChange: ({ value }) => {
+            if (!value) return "Email is required";
+            if (!value.includes("@")) return "Invalid email";
+          },
+        }}
+      >
+        {(field) => (
+          <div>
+            <label className="text-sm font-medium text-gray-600 mb-1 block">
+              Email
+            </label>
+
+            <div className="relative">
+              <input
+                type="email"
+                required
+                value={field.state.value}
+                onChange={(e) => field.handleChange(e.target.value)}
+                placeholder="you@example.com"
+                className="w-full h-12 pl-10 pr-3 rounded-lg border border-gray-200 bg-gray-50 focus:bg-white focus:border-orange-500 outline-none transition"
+              />
+            </div>
+
+            {field.state.meta.errors?.[0] && (
+              <p className="text-red-500 text-xs mt-1">
+                {field.state.meta.errors[0]}
+              </p>
+            )}
+          </div>
+        )}
+      </form.Field>
 
       {/* Password */}
-      <div className="flex flex-col relative">
-        <div className="flex justify-between items-center mb-1">
-          <label className="text-sm font-semibold text-gray-600">
-            Password
-          </label>
-          <Link
-            href="/forgot-password"
-            className="text-xs font-medium text-orange-600 hover:text-orange-700 hover:underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
-        <input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="••••••••"
-          className="input w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 pr-10 focus:border-orange-500 focus:bg-white focus:outline-none transition"
-          required
-        />
-        {/* Eye Toggle */}
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition"
-        >
-          {showPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
-        </button>
-      </div>
+
+      <form.Field name="password"
+        validators={{
+          onChange: ({ value }) => {
+            if (!value) return "Password required";
+            if (value.length < 6) return "Min 6 characters";
+            if(value.length > 8) return "Max 8 charaters";
+          },
+        }}
+      >
+        {(field) => (
+          <div className="flex flex-col relative">
+            <div className="flex justify-between items-center mb-1">
+              <label className="text-sm font-semibold text-gray-600">
+                Password
+              </label>
+              <Link
+                href="/forgot-password"
+                className="text-xs font-medium text-orange-600 hover:text-orange-700 hover:underline"
+              >
+                Forgot password?
+              </Link>
+            </div>
+            <input
+              type={showPassword ? "text" : "password"}
+              value={field.state.value}
+              onChange={(e) => field.handleChange(e.target.value)}
+              placeholder="••••••••"
+              className="input w-full rounded-lg border border-gray-300 bg-gray-50 px-4 py-2 pr-10 focus:border-orange-500 focus:bg-white focus:outline-none transition"
+              required
+            />
+            {/* Eye Toggle */}
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="absolute right-3 top-2/3 -translate-y-1/2 text-gray-400 hover:text-orange-500 transition"
+            >
+              {showPassword ? <EyeClosed size={20} /> : <Eye size={20} />}
+            </button>
+            {field.state.meta.errors?.[0] && (
+              <p className="text-red-500 text-xs mt-1">
+                {field.state.meta.errors[0]}
+              </p>
+            )}
+          </div>
+        )}
+      </form.Field>
 
       {/* Login Button */}
       <button

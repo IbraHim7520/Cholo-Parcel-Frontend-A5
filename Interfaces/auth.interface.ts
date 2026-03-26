@@ -5,3 +5,9 @@ export interface ISignupUser {
     confirmPassword:string,
     image?:string
 }
+
+
+export interface ILoginUser {
+    email:string,
+    password:string
+}

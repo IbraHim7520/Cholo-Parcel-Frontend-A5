@@ -6,10 +6,13 @@ import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { env } from "@/Config/env";
 import { Trykker } from "next/font/google";
+import { useRouter } from "next/navigation";
+import { Spinner } from "@/components/ui/spinner";
 
 const RegisterForm = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
 
   const form = useForm({
     defaultValues: {
@@ -26,7 +29,7 @@ const RegisterForm = () => {
       }
 
       let imageURL = '';
-      if(value.image && value.image !== null) {
+      if (value.image && value.image !== null) {
         const formData = new FormData();
         formData.append("image", value.image);
         try {
@@ -37,41 +40,39 @@ const RegisterForm = () => {
           const data = await response.json();
           imageURL = data.data.secure_url;
         } catch (error) {
-         if(env.NODE_ENV === 'development') {
-          console.error("Image upload failed:", error);
-         }
+          if (env.NODE_ENV === 'development') {
+            console.error("Image upload failed:", error);
+          }
         }
       }
 
       try {
         const sigupData = {
-          name:value.name,
+          name: value.name,
           email: value.email,
           password: value.password,
           image: imageURL
         }
-      const sigupPromise = await fetch(`${env.BACKEND_URL}/users/sign-up`, {
+        const sigupPromise = await fetch(`${env.BACKEND_URL}/users/sign-up`, {
           method: "POST",
-          headers:{
+          headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify(sigupData)
-          })
-          const data = await sigupPromise.json();
-          if(data.success){
-            toast.success(data.message);
-          }
+        })
+        const data = await sigupPromise.json();
+        if (data.success) {
+          toast.success(data.message);
+          router.push("/")
+        }
 
-    } catch (error) {
-      if(env.NODE_ENV === 'development') {
-        console.error("Signup failed:", error);
+      } catch (error) {
+        if (env.NODE_ENV === 'development') {
+          console.error("Signup failed:", error);
+        }
+        toast.error("Signup failed. Please try again.");
       }
-      toast.error("Signup failed. Please try again.");
-    }
-  
-
-
-      
+      setPreviewUrl(null)
       form.reset();
     },
   });
@@ -92,11 +93,10 @@ const RegisterForm = () => {
         >
           <div
             className={`w-24 h-24 rounded-2xl border-2 flex items-center justify-center overflow-hidden transition-all duration-300
-            ${
-              previewUrl
+            ${previewUrl
                 ? "border-orange-500"
                 : "border-gray-300 bg-gray-50 hover:border-orange-500"
-            }`}
+              }`}
           >
             {previewUrl ? (
               <img
@@ -194,7 +194,7 @@ const RegisterForm = () => {
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                 <input
-                type="email"
+                  type="email"
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="you@example.com"
@@ -250,7 +250,6 @@ const RegisterForm = () => {
             )}
           </form.Field>
 
-          {/* Confirm Password */}
           <form.Field
             name="confirmPassword"
             validators={{
@@ -290,14 +289,19 @@ const RegisterForm = () => {
 
         </div>
       </div>
-
-      {/* Submit */}
-      <button
-        type="submit"
-        className="w-full h-12 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-all active:scale-[0.98] shadow-md shadow-orange-500/20"
+      <form.Subscribe
+        selector={(state) => [state.canSubmit, state.isSubmitting]}
       >
-        Create Account
-      </button>
+        {([canSubmit, isSubmitting]) => (
+          <button
+            type="submit"
+            disabled={!canSubmit || isSubmitting}
+            className="w-full h-12 bg-orange-500 text-white font-semibold rounded-xl hover:bg-orange-600 transition-all active:scale-[0.98] shadow-md shadow-orange-500/20 flex items-center justify-center"
+          >
+            {isSubmitting ? <Spinner className="size-5" /> : "Sign Up"}
+          </button>
+        )}
+      </form.Subscribe>
     </form>
   );
 };
