@@ -29,7 +29,7 @@ export const useUser = () => {
     }, []);
 
     return {
-        user: userData,
+        user: userData?.data,
         isPending: pending
     };
 };

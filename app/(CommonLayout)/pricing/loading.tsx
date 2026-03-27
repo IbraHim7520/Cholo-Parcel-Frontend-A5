@@ -1,10 +1,9 @@
+import CustomLoading from '@/components/CustomComponents/CustomLoading';
 import React from 'react';
 
 const loading = () => {
     return (
-        <div>
-            
-        </div>
+        <CustomLoading />
     );
 };
 

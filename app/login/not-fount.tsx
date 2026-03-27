@@ -1,10 +1,9 @@
+import CustomNotFoundPage from '@/components/CustomComponents/CustomNotFound';
 import React from 'react';
 
 const LoginNotFoundPage = () => {
     return (
-        <div>
-            
-        </div>
+        <CustomNotFoundPage />
     );
 };
 

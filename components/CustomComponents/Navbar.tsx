@@ -5,11 +5,24 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import NavLogo from "../ui/NavLogo";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { useUser } from "@/utils/getUser";
+import { useUser } from "@/utils/useUser";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Button } from "../ui/button";
+import CustomLoading from "./CustomLoading";
+import { IUser } from "@/Interfaces/interfaces";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { user, isPending } = useUser();
+
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -18,13 +31,16 @@ const Navbar = () => {
     { name: "Contact", href: "/contact" },
   ];
 
-  // Optional loading state (prevents flicker)
-  if (isPending) return null;
-
+  if (isPending) {
+    return (
+      <CustomLoading />
+    )
+  }
+  console.log(user)
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-['Inter']">
-        
+
         {/* 3 Column Layout */}
         <div className="grid grid-cols-3 items-center h-16">
 
@@ -51,18 +67,36 @@ const Navbar = () => {
                 <span className="text-sm text-gray-700 hidden lg:block">
                   {user.name}
                 </span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Avatar className="cursor-pointer">
+                      <AvatarImage
+                        src={
+                          user.image ||
+                          "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"
+                        }
+                      />
+                      <AvatarFallback>
+                        {user?.name?.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuGroup>
+                      <DropdownMenuLabel>
+                        <Link className="btn btn-sm btn-outline w-full hover:border-none border" href={"/dashboard"}>Dashboard</Link>
+                      </DropdownMenuLabel>
+                      <p className="text-gray-700 text-sm w-full text-start ml-3">{user.role}</p>
+                    </DropdownMenuGroup>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem>
+                      <button className="btn btn-primary btn-sm w-full  cursor-pointer">
+                        Logout
+                      </button>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
-                <Avatar className="cursor-pointer">
-                  <AvatarImage
-                    src={
-                      user.image ||
-                      "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"
-                    }
-                  />
-                  <AvatarFallback>
-                    {user?.name?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
               </>
             ) : (
               <>
@@ -110,14 +144,22 @@ const Navbar = () => {
 
             {/* Auth Section Mobile */}
             {user ? (
-              <div className="flex items-center gap-3 pt-2">
-                <Avatar>
-                  <AvatarImage src={user.image || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"}  />
-                  <AvatarFallback>
-                    {user?.name?.charAt(0)}
-                  </AvatarFallback>
-                </Avatar>
-                <span className="text-gray-700">{user.name}</span>
+              <div className="flex flex-col justify-center   gap-3 pt-2">
+                <DropdownMenuSeparator />
+                <div className="flex items-center gap-3 pt-2">
+                  <Avatar>
+                    <AvatarImage src={user.image || "https://img.freepik.com/premium-vector/user-profile-icon-flat-style-member-avatar-vector-illustration-isolated-background-human-permission-sign-business-concept_157943-15752.jpg"} />
+                    <AvatarFallback>
+                      {user?.name?.charAt(0)}
+                    </AvatarFallback>
+                  </Avatar>
+                  <span className="text-gray-700">{user.name}</span>
+                </div>
+                <p className="text-gray-700 text-sm ml-2 badge bg-orange-500 px-12">{user.role}</p>
+                <Link className="btn btn-sm btn-outline w-full hover:border-none border" href={"/dashboard"}>Dashboard</Link>
+                <button className="btn bg-orange-500 text-white border-none hover:bg-orange-600 btn-sm w-full  cursor-pointer">
+                  Logout
+                </button>
               </div>
             ) : (
               <>
