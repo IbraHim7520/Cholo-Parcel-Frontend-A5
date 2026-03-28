@@ -30,6 +30,7 @@ export const useUser = () => {
 
     return {
         user: userData?.data,
-        isPending: pending
+        isPending: pending,
+        setUserData
     };
 };

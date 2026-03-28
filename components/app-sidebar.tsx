@@ -37,7 +37,6 @@ const ROUTES_CONFIG = {
         { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
         { title: "Create Parcel", url: "/dashboard/create-parcel", icon: PackagePlus },
         { title: "All Parcels", url: "/dashboard/parcels", icon: Package },
-        { title: "Pickup Requests", url: "/dashboard/pickups", icon: Truck },
       ]
     },
     {

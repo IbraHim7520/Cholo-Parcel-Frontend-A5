@@ -18,11 +18,14 @@ import {
 import { Button } from "../ui/button";
 import CustomLoading from "./CustomLoading";
 import { IUser } from "@/Interfaces/interfaces";
+import { env } from "@/Config/env";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user, isPending } = useUser();
-
+  const { user, isPending, setUserData } = useUser();
+  const router = useRouter()
 
   const navLinks = [
     { name: "Home", href: "/" },
@@ -30,7 +33,19 @@ const Navbar = () => {
     { name: "Pricing", href: "/pricing" },
     { name: "Contact", href: "/contact" },
   ];
-
+  const handleUserLogout = async()=>{
+    const logoutRes = await fetch(`${env.BACKEND_URL}/users/sign-out`, {
+      method: "POST",
+        credentials: "include"
+      })
+      const data = await logoutRes.json();
+      console.log(data)
+      if(data.success){
+        router.push("/")
+        toast.success(data.message || "User loggedout.")
+        setUserData(null)
+      }
+  }
   if (isPending) {
     return (
       <CustomLoading />
@@ -90,7 +105,7 @@ const Navbar = () => {
                     </DropdownMenuGroup>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem>
-                      <button className="btn btn-primary btn-sm w-full  cursor-pointer">
+                      <button onClick={handleUserLogout} className="btn btn-primary btn-sm w-full  cursor-pointer">
                         Logout
                       </button>
                     </DropdownMenuItem>
@@ -157,7 +172,7 @@ const Navbar = () => {
                 </div>
                 <p className="text-gray-700 text-sm ml-2 badge bg-orange-500 px-12">{user.role}</p>
                 <Link className="btn btn-sm btn-outline w-full hover:border-none border" href={"/dashboard"}>Dashboard</Link>
-                <button className="btn bg-orange-500 text-white border-none hover:bg-orange-600 btn-sm w-full  cursor-pointer">
+                <button onClick={handleUserLogout} className="btn bg-orange-500 text-white border-none hover:bg-orange-600 btn-sm w-full  cursor-pointer">
                   Logout
                 </button>
               </div>

@@ -212,6 +212,19 @@ const AddMerchantFormModal = ({ isOpen, onClose }: AddMerchantModalProps) => {
                                 </div>
                             )}
                         </form.Field>
+                        <form.Field name="ComphanyWebsite">
+                            {(field) => (
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[13px] font-semibold text-slate-700 uppercase tracking-wide">Business Website</label>
+                                    <input
+                                        value={field.state.value}
+                                        onChange={(e) => field.handleChange(e.target.value)}
+                                        className="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 focus:bg-white transition-all outline-none text-sm placeholder:text-slate-400"
+                                        placeholder="https://example.com"
+                                    />
+                                </div>
+                            )}
+                        </form.Field>
 
                         <form.Field name="ComphanyDescription">
                             {(field) => (

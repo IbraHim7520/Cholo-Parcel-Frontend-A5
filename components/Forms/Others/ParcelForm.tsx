@@ -39,6 +39,7 @@ export default function CreateParcelForm() {
         status: PercelStatus.REQUESTED,
         pickupLocation: "",
         isSelfPickup: false,
+        deliveryPrice: 0,
         percelType: PercelType.PAKAGE,
         reciverName: "",
         reciverContact: "",
@@ -50,13 +51,17 @@ export default function CreateParcelForm() {
     const form = useForm({
         defaultValues: createParcelValue,
         onSubmit: async ({ value }) => {
-            
+            // ✅ Recalculate here (source of truth)
+            const rate = RATES[value.percelType as keyof typeof RATES] || RATES.OTHERS;
+            const deliveryCharge = (value.weight || 0) * rate;
+
             const parcelData = {
                 name: value.name,
                 notes: value.notes,
                 weight: value.weight,
                 price: value.price,
                 status: value.status,
+                deliveryPrice: deliveryCharge, // ✅ correct now
                 pickupLocation: value.pickupLocation,
                 isSelfPickup: value.isSelfPickup,
                 percelType: value.percelType,
@@ -65,26 +70,27 @@ export default function CreateParcelForm() {
                 reciverAddress: value.reciverAddress,
                 pickupTime: value.pickupTime,
                 deliveryTime: value.deliveryTime,
-            }
+            };
+
             const res = await fetch(`${env.BACKEND_URL}/parcels/create-parcel`, {
                 method: "POST",
                 credentials: "include",
                 cache: "no-store",
-                headers:{
+                headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(parcelData)
-            })
-            const data = await res.json()
+                body: JSON.stringify(parcelData),
+            });
 
-            if(data.success){
-                toast.success(data.message)
-                form.reset()
-            }else{
-                toast.error(data.message || "Failed to make parcel request")
+            const data = await res.json();
+
+            if (data.success) {
+                toast.success(data.message);
+                form.reset();
+            } else {
+                toast.error(data.message || "Failed to make parcel request");
             }
-
-        },
+        }
     })
 
     const inputClasses = "w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/50 focus:bg-white dark:focus:bg-slate-900 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all duration-200 text-sm dark:text-white"

@@ -4,11 +4,11 @@ import { PercelStatus } from "@/Interfaces/interfaces";
 import { useState, useMemo } from "react";
 import { toast } from "sonner";
 
-const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParcelData[] }) => {
+const MerchantParcelTable = ({ initialParcels }: { initialParcels: IGetParcelData[] }) => {
     const [searchTerm, setSearchTerm] = useState("");
 
+    // Optimized search: Filters the list whenever searchTerm changes
     const filteredParcels = useMemo(() => {
-        if (!initialParcels) return [];
         return initialParcels.filter((parcel) =>
             parcel.id.toLowerCase().includes(searchTerm.toLowerCase())
         );
@@ -20,9 +20,9 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
     };
 
     return (
-        <div className="flex flex-col bg-white">
+        <div className="flex flex-col">
             {/* Search Bar Section */}
-            <div className="p-4 border-b border-slate-100">
+            <div className="p-4 border-b border-slate-100 bg-white">
                 <div className="relative max-w-sm">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                         <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -32,20 +32,10 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
                     <input
                         type="text"
                         placeholder="Search by Tracking ID..."
-                        className="block w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        className="block w-full pl-10 pr-3 py-2 border border-slate-200 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
-                    {searchTerm && (
-                        <button
-                            onClick={() => setSearchTerm("")}
-                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                            </svg>
-                        </button>
-                    )}
                 </div>
             </div>
 
@@ -71,6 +61,7 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
                                         <button
                                             onClick={() => copyTrackingId(parcel.id)}
                                             className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-200 rounded transition-all"
+                                            title="Copy Full ID"
                                         >
                                             <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
@@ -86,7 +77,7 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
 
                                 <td className="px-6 py-4">
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${parcel.status === PercelStatus.DELIVERED ? "bg-emerald-100 text-emerald-700" :
-                                            parcel.status === PercelStatus.CANCELLED ? "bg-rose-100 text-rose-700" :
+                                            parcel.status === "CANCELLED" ? "bg-rose-100 text-rose-700" :
                                                 "bg-blue-100 text-blue-700"
                                         }`}>
                                         {parcel.status.replace("_", " ")}
@@ -95,7 +86,7 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
 
                                 <td className="px-6 py-4">
                                     <p className="text-sm font-bold text-slate-800">৳{parcel.price}</p>
-                                    <p className="text-[10px] text-slate-400">COD: {parcel.deliveryPrice}</p>
+                                    <p className="text-[10px] text-slate-400">COD: {parcel.price}</p>
                                 </td>
 
                                 <td className="px-6 py-4 text-right">
@@ -108,31 +99,11 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
                     </tbody>
                 </table>
 
-                {/* --- HANDLE NO PARCELS OR NO FILTER RESULTS --- */}
                 {filteredParcels.length === 0 && (
-                    <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                        <div className="bg-slate-50 p-6 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                            </svg>
-                        </div>
-                        <h3 className="text-lg font-semibold text-slate-900">
-                            {searchTerm ? "No results found" : "No parcels yet"}
-                        </h3>
-                        <p className="text-slate-500 text-sm mt-1 max-w-xs mx-auto">
-                            {searchTerm
-                                ? `We couldn't find any parcel matching "${searchTerm}". Try checking for typos.`
-                                : "Your shipment list is currently empty. Start by creating a new parcel."
-                            }
+                    <div className="p-12 text-center">
+                        <p className="text-slate-400 italic text-sm">
+                            {searchTerm ? `No parcels found matching "${searchTerm}"` : "No parcels available."}
                         </p>
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm("")}
-                                className="mt-4 text-sm font-medium text-blue-600 hover:text-blue-700"
-                            >
-                                Clear search query
-                            </button>
-                        )}
                     </div>
                 )}
             </div>

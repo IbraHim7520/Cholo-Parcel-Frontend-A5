@@ -1,6 +1,6 @@
 import { PercelStatus, PercelType } from "./interfaces";
 
-    
+
 export interface ICreateParcel {
     name: string;
     notes: string;
@@ -14,6 +14,7 @@ export interface ICreateParcel {
     reciverContact: string;
     reciverAddress: string;
     pickupTime: string;
+    deliveryPrice:number;
     deliveryTime: string;
 }
 
@@ -32,7 +33,7 @@ export interface IParcel {
     pickupLocation: string;
     pickupTime: string;
     deliveryTime: string;
-
+    deliveryPrice:number
     isSelfPickup: boolean;
 
     reciverName: string;
@@ -49,4 +50,27 @@ export interface IParcelGroup {
 export interface IParcelResponse {
     parcelGroup: IParcelGroup[];
     parcels: IParcel[];
+}
+
+
+export interface IGetParcelData {
+
+    id: string;
+    name: string;
+    notes: string;
+    weight: number;
+    price: number;
+    status: PercelStatus;
+    pickupLocation: string;
+    isSelfPickup: boolean;
+    percelType: PercelType;
+    reciverName: string;
+    reciverContact: string;
+    reciverAddress: string;
+    pickupTime: string;
+    deliveryTime: string;
+    deliveryPrice:number
+    merchentId: string;
+    riderId: string | null;
+
 }
