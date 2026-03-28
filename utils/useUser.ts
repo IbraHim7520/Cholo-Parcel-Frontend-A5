@@ -16,7 +16,7 @@ export const useUser = () => {
                     credentials: "include"
                 });
                 const data = await res.json();
-                console.log(data)
+                
                 setUserData(data);
             } catch (error) {
                 setUserData(null);

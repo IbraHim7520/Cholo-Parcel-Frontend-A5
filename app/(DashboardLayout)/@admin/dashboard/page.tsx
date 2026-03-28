@@ -1,8 +1,8 @@
+import AdminStatisticsPage from "./statistics/page";
+
 const AdminDashboardHomePage = ()=>{
     return (
-        <div>
-            Admin dashboard homepage
-        </div>
+        <AdminStatisticsPage />
     )
 }
 

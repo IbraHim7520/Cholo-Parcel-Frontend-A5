@@ -1,4 +1,4 @@
-enum ComphanyType {
+export enum ComphanyType {
   ONLINE = "ONLINE",
   PHYSICAL = "PHYSICAL",
   BOTH = "BOTH",
@@ -7,32 +7,32 @@ enum ComphanyType {
 
 
 
-enum VehicleType {
+export enum VehicleType {
   BIKE = "BIKE",
   CYCLE = "CYCLE",
   VAN = "VAN",
 }
 
-enum NotificationStatus {
+export enum NotificationStatus {
   READ = "READ",
   UNREAD = "UNREAD",
 }
 
-enum PaymentStatus {
+export enum PaymentStatus {
   PAID = "PAID",
     UNPAID = "UNPAID",
     PENDING = "PENDING",
     CANCELLED = "CANCELLED",
 }
 
-enum PaymentMethode {
+export enum PaymentMethode {
   CASH = "CASH",
     MOBILE_BANKING = "MOBILE_BANKING",
     BANK_TRANSFER = "BANK_TRANSFER",
     CARD = "CARD",
 }
 
-enum PercelStatus {
+export enum PercelStatus {
   REQUESTED = "REQUESTED",
     CONFIRMED = "CONFIRMED",
     PICKED = "PICKED",
@@ -45,7 +45,7 @@ enum PercelStatus {
     RETURNED = "RETURNED",
 }
 
-enum PercelType {
+export enum PercelType {
   DOCUMENT = "DOCUMENT",
     GLASS = "GLASS",
     PAKAGE = "PAKAGE",
@@ -54,26 +54,26 @@ enum PercelType {
 }
 
 
-enum RiderRequestStatus {
+export enum RiderRequestStatus {
   PENDING = "PENDING",
     APPROVED = "APPROVED",
     REJECTED = "REJECTED",
 }
 
-enum MarchentStatus {
+export enum MarchentStatus {
   PENDING = "PENDING",
     APPROVED = "APPROVED",
     REJECTED = "REJECTED",
 }
 
-enum UserRole {
+export enum UserRole {
   USER = "USER",
   ADMIN = "ADMIN",
   RIDER = "RIDER",
   MERCHENT = "MERCHENT",
 }
 
-enum UserStatus {
+export enum UserStatus {
   ACTIVE = "ACTIVE",
   DEACTIVE = "DEACTIVE",
   DELETED = "DELETED",
@@ -98,4 +98,62 @@ export interface IUser {
     iat?: number;
     exp?: number;
   }
+}
+
+
+export interface IUser {
+  id: string;
+  name: string;
+  email: string;
+  image: string;
+
+  role: UserRole;
+  status: UserStatus;
+
+  isDeleted: boolean;
+  emailVerified: boolean;
+
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: string | null;
+}
+
+
+export interface IGetAllMarchentData {
+  id: string;
+
+  ComphanyName: string;
+  ComphanyAddress: string;
+  ComphanyPhone: string;
+  ComphanyEmail: string;
+  ComphanyLogo: string;
+  ComphanyDescription: string;
+  ComphanyWebsite: string;
+  ComphanyType: ComphanyType;
+
+  CreatedAt: string;
+  UpdatedAt: string;
+
+  ownerId: string;
+  status: MarchentStatus;
+
+  user: IUser;
+}
+
+
+
+export interface IDashboardStats {
+  activeUser: number;
+  approvedRiders: number;
+  cancelledParcels: number;
+  deletedUser: number;
+  deliveredParcels: number;
+  inactiveUser: number;
+  pendingRiders: number;
+  rejectedRiders: number;
+  returnedParcels: number;
+  totalMarchent: number;
+  totalParcels: number;
+  totalRider: number;
+  totalUser: number;
 }
