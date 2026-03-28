@@ -13,9 +13,13 @@ export enum VehicleType {
   VAN = "VAN",
 }
 
-export enum NotificationStatus {
-  READ = "READ",
-  UNREAD = "UNREAD",
+export enum NotificationTarget {
+  ALL = "ALL",
+    USER = "USER",
+    MERCHENT = "MERCHENT",
+    RIDER = "RIDER",
+    ADMIN = "ADMIN",
+
 }
 
 export enum PaymentStatus {

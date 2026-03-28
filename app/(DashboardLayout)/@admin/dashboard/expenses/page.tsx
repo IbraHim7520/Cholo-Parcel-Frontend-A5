@@ -1,8 +1,8 @@
+import UnderConstruction from "@/components/Forms/Others/UnderConstructionPage"
+
 const AdminExpensesPage = () => {
     return (
-        <div>
-            Admin expenses page
-        </div>
+        <UnderConstruction />
     )
 }
 export default AdminExpensesPage

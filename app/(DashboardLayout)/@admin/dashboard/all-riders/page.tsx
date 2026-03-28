@@ -15,7 +15,7 @@ async function getAllRiders() {
 
 const AdminAllRidersPage = async () => {
     const riders = await getAllRiders();
-    console.log(riders)
+    
     return (
         <div className="p-6 bg-gray-50 min-h-screen">
             <div className="max-w-7xl mx-auto">

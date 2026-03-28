@@ -1,8 +1,8 @@
+import UnderConstruction from "@/components/Forms/Others/UnderConstructionPage"
+
 const MarchentTransactionsPage = () => {
     return (
-        <div>
-            <h1>Marchent Transactions Page</h1>
-        </div>
+        <UnderConstruction />
     )
 }
 

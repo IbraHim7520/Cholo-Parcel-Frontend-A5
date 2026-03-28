@@ -1,8 +1,8 @@
+import UnderConstruction from "@/components/Forms/Others/UnderConstructionPage"
+
 const MarchentWalletPage = () => {
     return (
-        <div>
-            <h1>Marchent Wallet Page</h1>
-        </div>
+        <UnderConstruction />
     )
 }
 
