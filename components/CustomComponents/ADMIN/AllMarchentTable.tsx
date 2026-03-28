@@ -1,11 +1,11 @@
 "use client";
 import { IGetAllMarchentData, MarchentStatus } from "@/Interfaces/interfaces";
-import React, { useMemo, useState } from "react";
+import  { useMemo, useState } from "react";
 
 const AllMarchentTable = ({ initialData }: { initialData: IGetAllMarchentData[] }) => {
     const [searchTerm, setSearchTerm] = useState("");
 
-    // ✅ FIXED: using correct field names
+    
     const filteredData = useMemo(() => {
         return initialData.filter((merchant) =>
             merchant.ComphanyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
