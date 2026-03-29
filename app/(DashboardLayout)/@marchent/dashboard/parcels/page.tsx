@@ -1,38 +1,80 @@
 "use client";
 import { IGetParcelData } from "@/Interfaces/parcel.interface";
 import { PercelStatus } from "@/Interfaces/interfaces";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
+import { env } from "@/Config/env";
+import { Search, Copy, Eye, Package, Loader2, XCircle } from "lucide-react";
 
-const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParcelData[] }) => {
+const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels?: IGetParcelData[] }) => {
     const [searchTerm, setSearchTerm] = useState("");
+    const [parcels, setParcels] = useState<IGetParcelData[]>(initialParcels);
+    const [isLoading, setIsLoading] = useState(false);
 
+    // API to fetch parcels
+    const fetchAllParcels = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch(`${env.BACKEND_URL}/parcels/marchent-parcel`, {
+                method: "GET",
+                credentials: "include",
+            });
+            const data = await res.json();
+
+            if (data.success) {
+                setParcels(data.data);
+            } else {
+                toast.error(data.message || "Failed to load parcels");
+            }
+        } catch (error) {
+            console.error("Fetch error:", error);
+            toast.error("Network error. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Load data on mount if initialParcels is empty
+    useEffect(() => {
+        if (initialParcels.length === 0) {
+            fetchAllParcels();
+        }
+    }, []);
+
+    // Optimized Search Filter
     const filteredParcels = useMemo(() => {
-        if (!initialParcels) return [];
-        return initialParcels.filter((parcel) =>
-            parcel.id.toLowerCase().includes(searchTerm.toLowerCase())
+        return parcels.filter((parcel) =>
+            parcel.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            parcel.reciverName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            parcel.reciverContact.includes(searchTerm)
         );
-    }, [searchTerm, initialParcels]);
+    }, [searchTerm, parcels]);
 
     const copyTrackingId = (id: string) => {
         navigator.clipboard.writeText(id);
-        toast.success("Tracking ID copied!");
+        toast.success("Tracking ID copied to clipboard!");
+    };
+
+    // Helper for Status Styles
+    const getStatusStyle = (status: PercelStatus) => {
+        switch (status) {
+            case PercelStatus.DELIVERED: return "bg-emerald-100 text-emerald-700";
+            case PercelStatus.CANCELLED: return "bg-rose-100 text-rose-700";
+            case PercelStatus.IN_TRANSIT: return "bg-amber-100 text-amber-700";
+            default: return "bg-blue-100 text-blue-700";
+        }
     };
 
     return (
-        <div className="flex flex-col bg-white">
+        <div className="flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
             {/* Search Bar Section */}
-            <div className="p-4 border-b border-slate-100">
-                <div className="relative max-w-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg className="h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                    </div>
+            <div className="p-4 border-b border-slate-100 flex items-center justify-between gap-4">
+                <div className="relative flex-1 max-w-md">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <input
                         type="text"
-                        placeholder="Search by Tracking ID..."
-                        className="block w-full pl-10 pr-10 py-2 border border-slate-200 rounded-lg text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                        placeholder="Search by Tracking ID, Name or Contact..."
+                        className="block w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -41,66 +83,81 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
                             onClick={() => setSearchTerm("")}
                             className="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                            </svg>
+                            <XCircle className="h-4 w-4" />
                         </button>
                     )}
                 </div>
+                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest hidden sm:block">
+                    Total: {filteredParcels.length}
+                </div>
             </div>
 
+            {/* Table Area */}
             <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                     <thead>
-                        <tr className="bg-slate-50 border-b border-slate-200">
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Tracking ID</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Recipient</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Status</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">Charges</th>
-                            <th className="px-6 py-4 text-xs font-semibold text-slate-500 uppercase tracking-wider text-right">Action</th>
+                        <tr className="bg-slate-50/50 border-b border-slate-100">
+                            <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-widest">Parcel Info</th>
+                            <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-widest">Recipient</th>
+                            <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-widest">Status</th>
+                            <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-widest">Amount</th>
+                            <th className="px-6 py-4 text-[11px] font-black text-slate-500 uppercase tracking-widest text-right">Action</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {filteredParcels.map((parcel) => (
+                        {isLoading ? (
+                            <tr>
+                                <td colSpan={5} className="py-20">
+                                    <div className="flex flex-col items-center justify-center text-slate-400">
+                                        <Loader2 className="h-8 w-8 animate-spin text-blue-500 mb-2" />
+                                        <p className="text-sm font-medium">Fetching parcels...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) : filteredParcels.map((parcel) => (
                             <tr key={parcel.id} className="hover:bg-slate-50/50 transition-colors group">
                                 <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2">
-                                        <span className="font-mono text-sm font-medium text-blue-600">
-                                            #{parcel.id.slice(-8).toUpperCase()}
-                                        </span>
-                                        <button
-                                            onClick={() => copyTrackingId(parcel.id)}
-                                            className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-200 rounded transition-all"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2" />
-                                            </svg>
-                                        </button>
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
+                                            <Package size={18} />
+                                        </div>
+                                        <div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="font-mono text-sm font-bold text-slate-700">
+                                                    #{parcel.id.slice(-8).toUpperCase()}
+                                                </span>
+                                                <button
+                                                    onClick={() => copyTrackingId(parcel.id)}
+                                                    className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-200 rounded text-slate-400 transition-all"
+                                                    title="Copy Tracking ID"
+                                                >
+                                                    <Copy size={12} />
+                                                </button>
+                                            </div>
+                                            <p className="text-[10px] text-slate-400 font-medium uppercase mt-0.5">{parcel.percelType}</p>
+                                        </div>
                                     </div>
                                 </td>
 
                                 <td className="px-6 py-4">
-                                    <p className="text-sm font-semibold text-slate-800">{parcel.reciverName}</p>
+                                    <p className="text-sm font-bold text-slate-800">{parcel.reciverName}</p>
                                     <p className="text-xs text-slate-500">{parcel.reciverContact}</p>
                                 </td>
 
                                 <td className="px-6 py-4">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase ${parcel.status === PercelStatus.DELIVERED ? "bg-emerald-100 text-emerald-700" :
-                                            parcel.status === PercelStatus.CANCELLED ? "bg-rose-100 text-rose-700" :
-                                                "bg-blue-100 text-blue-700"
-                                        }`}>
+                                    <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${getStatusStyle(parcel.status)}`}>
                                         {parcel.status.replace("_", " ")}
                                     </span>
                                 </td>
 
                                 <td className="px-6 py-4">
-                                    <p className="text-sm font-bold text-slate-800">৳{parcel.price}</p>
-                                    <p className="text-[10px] text-slate-400">COD: {parcel.deliveryPrice}</p>
+                                    <p className="text-sm font-black text-slate-800">৳{parcel.price}</p>
+                                    <p className="text-[10px] text-slate-400 font-bold uppercase">Deliv: ৳{parcel.deliveryPrice}</p>
                                 </td>
 
                                 <td className="px-6 py-4 text-right">
-                                    <button className="text-xs font-semibold text-blue-600 hover:bg-blue-50 px-3 py-1 rounded-md transition-colors">
-                                        View
+                                    <button className="inline-flex items-center gap-1.5 text-xs font-bold text-blue-600 hover:bg-blue-50 px-4 py-2 rounded-xl transition-all border border-transparent hover:border-blue-100">
+                                        <Eye size={14} /> View
                                     </button>
                                 </td>
                             </tr>
@@ -108,31 +165,20 @@ const MerchantParcelTable = ({ initialParcels = [] }: { initialParcels: IGetParc
                     </tbody>
                 </table>
 
-                {/* --- HANDLE NO PARCELS OR NO FILTER RESULTS --- */}
-                {filteredParcels.length === 0 && (
+                {/* Empty State */}
+                {!isLoading && filteredParcels.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-                        <div className="bg-slate-50 p-6 rounded-full mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-slate-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-                            </svg>
+                        <div className="bg-slate-50 p-6 rounded-3xl mb-4 text-slate-300">
+                            <Package size={48} strokeWidth={1.5} />
                         </div>
-                        <h3 className="text-lg font-semibold text-slate-900">
-                            {searchTerm ? "No results found" : "No parcels yet"}
+                        <h3 className="text-lg font-bold text-slate-900">
+                            {searchTerm ? "No matching parcels" : "No parcel found"}
                         </h3>
                         <p className="text-slate-500 text-sm mt-1 max-w-xs mx-auto">
                             {searchTerm
-                                ? `We couldn't find any parcel matching "${searchTerm}". Try checking for typos.`
-                                : "Your shipment list is currently empty. Start by creating a new parcel."
-                            }
+                                ? `We couldn't find anything matching "${searchTerm}". Try a different ID or name.`
+                                : "Your shipment list is empty. Create your first parcel to see it here."}
                         </p>
-                        {searchTerm && (
-                            <button
-                                onClick={() => setSearchTerm("")}
-                                className="mt-4 text-sm font-medium text-blue-600 hover:text-blue-700"
-                            >
-                                Clear search query
-                            </button>
-                        )}
                     </div>
                 )}
             </div>

@@ -49,7 +49,6 @@ const ROUTES_CONFIG = {
     {
       label: "Management",
       items: [
-        { title: "Customers", url: "/dashboard/customers", icon: Users },
         { title: "Reviews", url: "/dashboard/reviews", icon: Star },
         { title: "Settings", url: "/dashboard/settings", icon: Settings },
       ]
@@ -71,6 +70,7 @@ const ROUTES_CONFIG = {
       items: [
         { title: "Users Management", url: "/dashboard/users", icon: ShieldCheck },
         { title: "Notification", url: "/dashboard/notifications", icon: Bell },
+        { title: "Settings", url: "/dashboard/settings", icon: Settings },
       ]
     }
   ],
@@ -78,16 +78,17 @@ const ROUTES_CONFIG = {
     {
       label: "Deliveries",
       items: [
-        { title: "My Tasks", url: "/dashboard/rider", icon: ClipboardList },
-        { title: "Live Map", url: "/dashboard/rider/map", icon: MapPin },
-        { title: "Pickup List", url: "/dashboard/rider/pickups", icon: Truck },
+        { title: "My Tasks", url: "/dashboard/rider-task", icon: ClipboardList },
+        { title: "Live Parcels", url: "/dashboard/live-parcels", icon: MapPin },
+        { title: "Delivered Parcels", url: "/dashboard/delivered-parcels", icon: Truck },
       ]
     },
     {
       label: "Personal",
       items: [
-        { title: "Earnings", url: "/dashboard/rider/earnings", icon: Wallet },
-        { title: "Notifications", url: "/dashboard/rider/alerts", icon: Bell },
+        { title: "Earnings", url: "/dashboard/rider-earnings", icon: Wallet },
+        { title: "Notifications", url: "/dashboard/rider-notification", icon: Bell },
+        { title: "Settings", url: "/dashboard/settings", icon: Settings },
       ]
     }
   ]

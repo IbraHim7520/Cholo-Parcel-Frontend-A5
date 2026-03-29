@@ -39,7 +39,6 @@ const Navbar = () => {
         credentials: "include"
       })
       const data = await logoutRes.json();
-      console.log(data)
       if(data.success){
         router.push("/")
         toast.success(data.message || "User loggedout.")
@@ -51,7 +50,7 @@ const Navbar = () => {
       <CustomLoading />
     )
   }
-  console.log(user)
+  
   return (
     <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 font-['Inter']">
