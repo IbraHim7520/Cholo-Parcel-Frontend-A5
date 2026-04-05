@@ -1,15 +1,11 @@
 
 import AdminSettings from "@/components/CustomComponents/RoleBasedSettingsPages/AdminSettings";
 import MerchentSettings from "@/components/CustomComponents/RoleBasedSettingsPages/MerchentSettings";
-import RidersSetting from "@/components/CustomComponents/RoleBasedSettingsPages/RidersSetting";
-import { IUser, UserRole } from "@/Interfaces/interfaces";
-import { useUser } from "@/utils/useUser";
 import { Settings as SettingsIcon } from "lucide-react";
-import CustomLoading from "@/components/CustomComponents/CustomLoading";
 
 const SettingsPage = () => {
-    
-    
+
+
     return (
         <div className="min-h-screen bg-[#F8FAFC] pb-5">
             {/* Minimalist Top Header */}
@@ -31,11 +27,11 @@ const SettingsPage = () => {
                 {/* Left Info Column (Server Side) */}
                 <aside className="w-full">
                     <div className="w-full">
-                         <AdminSettings/>
+                        <MerchentSettings />
                     </div>
-                    </aside>
-                </div>
+                </aside>
             </div>
+        </div>
     );
 };
 

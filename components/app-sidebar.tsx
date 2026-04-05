@@ -48,7 +48,7 @@ const ROUTES_CONFIG = {
       label: "Management",
       items: [
         { title: "Reviews", url: "/dashboard/reviews", icon: Star },
-        { title: "Settings", url: "/dashboard/settings", icon: Settings },
+        { title: "Settings", url: "/dashboard/my-settings", icon: Settings },
       ]
     }
   ],

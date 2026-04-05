@@ -27,3 +27,26 @@ export interface IMerchentGetOwnPercels {
     deliveryTime: string;    // ISO string
 
 }
+
+
+export interface IReview {
+    id: string;
+    rating: number;
+    comment: string;
+    createdAt: string;
+    updatedAt: string;
+    userId: string;
+    percelId: string;
+    user: {
+        id: string;
+        name: string;
+        email: string;
+        image: string;
+    };
+    percel: {
+        id: string;
+        name: string;
+        reciverName: string;
+        reciverAddress: string;
+    };
+}
