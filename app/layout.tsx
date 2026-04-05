@@ -30,14 +30,17 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} ${roboto.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans" suppressHydrationWarning>
-        <Toaster />
-        <Providers > {children}</Providers>
+        
+          <Toaster />
+          <Providers > {children}</Providers>
+        
       </body>
     </html>
   );

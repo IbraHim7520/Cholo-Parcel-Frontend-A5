@@ -1,9 +1,9 @@
-const MarchentReviewsPage = () => {
+const MerchentReviewsPage = () => {
     return (
         <div>
-            <h1>Marchent Reviews Page</h1>
+            <h1>Merchent Reviews</h1>
         </div>
     )
 }
 
-export default MarchentReviewsPage
+export default MerchentReviewsPage

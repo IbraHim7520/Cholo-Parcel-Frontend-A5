@@ -18,6 +18,7 @@ export const useUser = () => {
                 const data = await res.json();
                 
                 setUserData(data);
+                console.log(data)
             } catch (error) {
                 setUserData(null);
             } finally {

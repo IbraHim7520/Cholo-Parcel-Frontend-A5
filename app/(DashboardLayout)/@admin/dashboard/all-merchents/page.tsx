@@ -3,15 +3,12 @@
 import { useEffect, useState } from "react";
 import MerchantTable from "@/components/Tables/AllMerchentTable";
 import { env } from "@/Config/env";
-import { IAdminGetAllRider, IGetMerchantData } from "@/Interfaces/admin.interface";
+import { IGetMerchantData } from "@/Interfaces/admin.interface";
 import MerchentRequestBox from "@/components/DialogueBox/MerchentRequestBox";
 import AdminCreateMerchentForm from "@/components/Forms/Others/AdminCreateMerchentForm";
-import AllRidersTable from "@/components/Tables/AllRidersTable";
-import AdminCreateRiderForm from "@/components/Forms/AdminCreateRiderForm";
-import RiderRequestBox from "@/components/DialogueBox/RiderRequestBox";
 
-export default function AllRidersPage() {
-    const [merchants, setMerchants] = useState<IAdminGetAllRider[]>([]);
+export default function AllMerchantsPage() {
+    const [merchants, setMerchants] = useState<IGetMerchantData[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Fetching data on the client side
@@ -19,13 +16,12 @@ export default function AllRidersPage() {
         const fetchMerchants = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`${env.BACKEND_URL}/admins/all-riders`, {
+                const response = await fetch(`${env.BACKEND_URL}/admins/get-all-merchent`, {
                     credentials: 'include',
                     headers: { 'Content-Type': 'application/json' },
                     method: 'GET',
                 });
                 const result = await response.json();
-                
                 setMerchants(result.data || []);
             } catch (error) {
                 console.error("Failed to fetch merchants:", error);
@@ -39,20 +35,20 @@ export default function AllRidersPage() {
 
     // Button Handlers
     const handleCreateMerchant = () => {
-        const modal = document.getElementById("createRiderModal") as HTMLDialogElement;
+        const  modal = document.getElementById("createMerchentModal") as HTMLDialogElement;
         modal.showModal()
     };
 
     const handleViewRequests = () => {
-        const modal = document.getElementById("riderRequestModal") as HTMLDialogElement;
+        const modal = document.getElementById("merchentRequestModal") as HTMLDialogElement;
         modal.showModal()
     };
 
     return (
         <div className="min-h-screen bg-[#FBFBFB] p-6 lg:p-12">
-            <dialog id="riderRequestModal" className="modal">
+            <dialog id="merchentRequestModal" className="modal">
                 <div className="modal-box w-11/12 max-w-5xl">
-                    <RiderRequestBox />
+                    <MerchentRequestBox/>
                     <div className="modal-action">
                         <form method="dialog">
                             {/* if there is a button, it will close the modal */}
@@ -61,9 +57,9 @@ export default function AllRidersPage() {
                     </div>
                 </div>
             </dialog>
-            <dialog id="createRiderModal" className="modal">
+            <dialog id="createMerchentModal" className="modal">
                 <div className="modal-box w-11/12 max-w-5xl">
-                    <AdminCreateRiderForm modal={"createRiderModal"} />
+                    <AdminCreateMerchentForm modal={"createMerchentModal"}/>
                     <div className="modal-action">
                         <form method="dialog">
                             {/* if there is a button, it will close the modal */}
@@ -75,7 +71,7 @@ export default function AllRidersPage() {
             <div className="max-w-6xl mx-auto">
                 <header className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
                     <div className="space-y-1">
-                        <h1 className="text-4xl font-light tracking-tight text-slate-900">Riders Management</h1>
+                        <h1 className="text-4xl font-light tracking-tight text-slate-900">Merchants Management</h1>
                         <p className="text-slate-500 font-medium text-sm uppercase tracking-widest">Directory / 2026</p>
                     </div>
 
@@ -84,13 +80,13 @@ export default function AllRidersPage() {
                             onClick={handleViewRequests}
                             className="px-5 py-2.5 text-sm font-medium border border-slate-200 rounded-full hover:bg-white hover:shadow-sm transition-all text-slate-600 active:scale-95"
                         >
-                            Riders Requests
+                            Merchant Requests
                         </button>
                         <button
                             onClick={handleCreateMerchant}
                             className="px-5 py-2.5 text-sm font-medium bg-slate-900 text-white rounded-full hover:bg-slate-800 shadow-lg shadow-slate-200 transition-all active:scale-95"
                         >
-                            + New Rider
+                            + New Merchant
                         </button>
                     </div>
                 </header>
@@ -98,7 +94,7 @@ export default function AllRidersPage() {
                 {loading ? (
                     <TableSkeleton />
                 ) : (
-                    <AllRidersTable initialData={merchants} />
+                    <MerchantTable initialData={merchants} />
                 )}
             </div>
         </div>

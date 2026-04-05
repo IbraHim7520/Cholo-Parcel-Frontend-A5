@@ -1,13 +1,12 @@
 "use client";
-
-import React, { useState, useRef } from "react";
+import { useState, useRef } from "react";
 import { Camera, User, Mail, Lock, ShieldCheck } from "lucide-react";
 import { useForm } from "@tanstack/react-form";
 import { toast } from "sonner";
 import { env } from "@/Config/env";
-import { Trykker } from "next/font/google";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
+import sendImageToServer from "@/utils/sendImage";
 
 const RegisterForm = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
@@ -33,12 +32,7 @@ const RegisterForm = () => {
         const formData = new FormData();
         formData.append("image", value.image);
         try {
-          const response = await fetch(`${env.BACKEND_URL}/users/upload-image`, {
-            method: "POST",
-            body: formData
-          })
-          const data = await response.json();
-          imageURL = data.data.secure_url;
+          imageURL = await sendImageToServer(formData);
         } catch (error) {
           if (env.NODE_ENV === 'development') {
             console.error("Image upload failed:", error);

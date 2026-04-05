@@ -1,4 +1,3 @@
-import React from "react";
 import { Search, Info, Truck, ShieldCheck, Map } from "lucide-react";
 import TrackingSearchForm from "@/components/Forms/Others/TrackParcelForm";
 

@@ -1,8 +1,7 @@
-import AdminStatisticsPage from "./statistics/page";
 
 const AdminDashboardHomePage = ()=>{
     return (
-        <AdminStatisticsPage />
+        <p>Admin dashbord home page</p>
     )
 }
 

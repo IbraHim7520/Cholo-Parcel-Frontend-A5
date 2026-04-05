@@ -10,6 +10,7 @@ import {
 
 // ✅ ADD THIS
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { UserRole } from "@/Interfaces/interfaces";
 import { useUser } from "@/utils/useUser";
 
 interface IUserRole {
@@ -20,6 +21,7 @@ interface IUserRole {
 
 const DashboardLayout = ({admin , marchent , rider}: IUserRole) => {
   const {user , isPending} = useUser();
+  console.log(user?.role)
   if(isPending) return <CustomLoading />
   return (
     <TooltipProvider> {/* ✅ FIX */}
@@ -37,9 +39,9 @@ const DashboardLayout = ({admin , marchent , rider}: IUserRole) => {
       
 
           <main className="flex flex-1 flex-col gap-6 p-4 md:p-6">
-            {user?.role === "ADMIN" && admin}
-            {user?.role === "MERCHENT" && marchent}
-            {user?.role === "RIDER" && rider}
+            {user?.role === UserRole.ADMIN && admin}
+            {user?.role === UserRole.MERCHENT && marchent}
+            {user?.role === UserRole.RIDER && rider}
           </main>
         </SidebarInset>
       </SidebarProvider>

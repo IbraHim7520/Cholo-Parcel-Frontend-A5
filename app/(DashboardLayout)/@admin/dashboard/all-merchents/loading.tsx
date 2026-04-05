@@ -1,6 +1,6 @@
 import CustomLoading from "@/components/CustomComponents/CustomLoading"
 
-const loading = () => {
+const loading = ()=>{
     return (
         <CustomLoading />
     )

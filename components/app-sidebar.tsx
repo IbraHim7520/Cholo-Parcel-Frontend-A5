@@ -7,8 +7,7 @@ import {
   LayoutDashboard, PackagePlus, Package,
   Truck, Wallet, Receipt, Users, Star, Settings,
   ShieldCheck, MapPin, ClipboardList, BarChart3,
-  UserCog, Bell,
-  DollarSign
+  Bell, DollarSign
 } from "lucide-react"
 
 import { NavUser } from "@/components/nav-user"
@@ -28,7 +27,6 @@ import NavLogo from "./ui/NavLogo"
 import { useUser } from "@/utils/useUser"
 
 // --- Route Definitions by Role ---
-
 const ROUTES_CONFIG = {
   MERCHANT: [
     {
@@ -42,8 +40,8 @@ const ROUTES_CONFIG = {
     {
       label: "Finance",
       items: [
-        { title: "Wallet", url: "/dashboard/wallet", icon: Wallet },
-        { title: "Transactions", url: "/dashboard/transactions", icon: Receipt },
+        { title: "Wallet", url: "/dashboard/merchent-wallet", icon: Wallet },
+        { title: "Transactions", url: "/dashboard/merchent-transactions", icon: Receipt },
       ]
     },
     {
@@ -59,18 +57,19 @@ const ROUTES_CONFIG = {
       label: "System Overview",
       items: [
         { title: "Admin Stats", url: "/dashboard", icon: BarChart3 },
-        { title: "All Merchants", url: "/dashboard/all-marchents", icon: Users },
-        { title: "System Parcels", url: "/dashboard/all-parcels", icon: Package },
+        { title: "All Merchants", url: "/dashboard/all-merchents", icon: Users },
+        { title: "System Parcels", url: "/dashboard/percels-list", icon: Package },
         { title: "All Riders", url: "/dashboard/all-riders", icon: Users },
-        { title: "Transactions", url: "/dashboard/expenses", icon: DollarSign },
+        { title: "Transactions", url: "/dashboard/transactions", icon: DollarSign },
       ]
     },
     {
       label: "Security & Control",
       items: [
-        { title: "Users Management", url: "/dashboard/users", icon: ShieldCheck },
-        { title: "Notification", url: "/dashboard/notifications", icon: Bell },
+        { title: "Users Management", url: "/dashboard/all-users", icon: ShieldCheck },
+        { title: "Notification", url: "/dashboard/notification-management", icon: Bell },
         { title: "Settings", url: "/dashboard/settings", icon: Settings },
+        { title: "Wallet", url: "/dashboard/wallet", icon: Wallet },
       ]
     }
   ],
@@ -91,16 +90,15 @@ const ROUTES_CONFIG = {
         { title: "Settings", url: "/dashboard/settings", icon: Settings },
       ]
     }
-  ]
+  ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { user } = useUser()
   const pathname = usePathname()
-  console.log(pathname)
-  // Fallback to MERCHANT if role is undefined, adjust as per your logic
-  const userRole = (user?.role?.toUpperCase() as keyof typeof ROUTES_CONFIG) || "MERCHANT"
-  const activeRoutes = ROUTES_CONFIG[userRole] || ROUTES_CONFIG.MERCHANT
+
+  // Safely get the role string or fallback to MERCHANT
+  const userRole = (user?.role?.toUpperCase() || "MERCHANT") as keyof typeof ROUTES_CONFIG
 
   return (
     <Sidebar collapsible="offcanvas" className="border-r border-slate-200/50 dark:border-slate-800/50" {...props}>
@@ -109,16 +107,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
 
       <SidebarContent className="px-2 scrollbar-none">
-        {activeRoutes.map((section, index) => (
+        {/* Inline mapping based on the current user role */}
+        {(ROUTES_CONFIG[userRole] || ROUTES_CONFIG.MERCHANT).map((section, index, array) => (
           <React.Fragment key={section.label}>
             <SidebarGroup>
-              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 mb-2">
+              <SidebarGroupLabel className="text-[10px] uppercase tracking-wider font-bold text-slate-400 dark:text-slate-500 mb-2 px-3">
                 {section.label}
               </SidebarGroupLabel>
               <SidebarMenu>
                 {section.items.map((item) => {
                   const isActive = pathname === item.url
-                  console.log("isActive->",isActive)
+
                   return (
                     <SidebarMenuItem key={item.title} className="mb-0.5">
                       <SidebarMenuButton
@@ -127,13 +126,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         className={`
                           group relative flex items-center gap-3 px-3 py-2 rounded-md transition-all duration-200
                           ${isActive
-                            ? "bg-blue-50 text-orange-500 "
+                            ? "bg-orange-50 text-orange-600 dark:bg-orange-500/10 dark:text-orange-400"
                             : "text-slate-500 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800/50 dark:hover:text-slate-100"
                           }
                         `}
                       >
                         <Link href={item.url}>
-                          <item.icon className="h-4 w-4 transition-transform duration-200 group-hover:scale-110" />
+                          <item.icon className={`h-4 w-4 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-orange-600" : ""}`} />
                           <span className="text-sm font-medium">{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -143,9 +142,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenu>
             </SidebarGroup>
 
-            {/* Don't show separator after the last group */}
-            {index < activeRoutes.length - 1 && (
-              <SidebarSeparator className="mx-2 my-2 opacity-50" />
+            {/* Separator logic using the array from the map callback */}
+            {index < array.length - 1 && (
+              <SidebarSeparator className="mx-2 my-2 opacity-30" />
             )}
           </React.Fragment>
         ))}
