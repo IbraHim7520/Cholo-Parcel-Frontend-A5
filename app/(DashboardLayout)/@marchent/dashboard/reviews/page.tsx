@@ -1,12 +1,10 @@
 import ReviewTable from "@/components/Tables/MerchentReviewPage";
 import { env } from "@/Config/env";
-import { Package, Star, MessageSquare } from "lucide-react";
+import { Star } from "lucide-react";
 
 const MerchentReviewsPage = async () => {
     const reviewRes = await fetch(`${env.BACKEND_URL}/merchent/my-reviews`, {
-        cache: 'no-store', // Ensure fresh data on server
-        // credentials: "include" // Note: credentials "include" is for client-side fetch. 
-        // For server-side, you usually pass cookies/headers manually.
+        cache: 'no-store',
     });
 
     const response = await reviewRes.json();

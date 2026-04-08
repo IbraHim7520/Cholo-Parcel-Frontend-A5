@@ -19,7 +19,7 @@ const ReviewTable = ({ initialReviews }: ReviewTableProps) => {
         setDeletingId(id);
         try {
             const res = await fetch(`${env.BACKEND_URL}/merchent/delete-review/${id}`, {
-                credentials:"include",
+                credentials: "include",
                 method: "DELETE",
             });
 

@@ -15,10 +15,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Button } from "../ui/button";
 import CustomLoading from "./CustomLoading";
-import { IUser } from "@/Interfaces/interfaces";
-import { env } from "@/Config/env";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -34,14 +31,10 @@ const Navbar = () => {
     { name: "Contact", href: "/contact" },
   ];
   const handleUserLogout = async()=>{
-    const logoutRes = await fetch(`${env.BACKEND_URL}/users/sign-out`, {
-      method: "POST",
-        credentials: "include"
-      })
-      const data = await logoutRes.json();
-      if(data.success){
+    const result:any = await handleUserLogout()
+      if(result.success){
         router.push("/")
-        toast.success(data.message || "User loggedout.")
+        toast.success(result.message || "User loggedout.")
         setUserData(null)
       }
   }

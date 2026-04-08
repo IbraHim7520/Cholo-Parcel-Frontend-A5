@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
+import { useUser } from "@/utils/useUser";
 
 interface IAdminUser {
     id: string;
@@ -24,9 +25,9 @@ interface IAdminUser {
     image?: string;
 }
 
-const RidersSetting = ({ user }: { user: IAdminUser }) => {
+const RidersSetting = () => {
     const [isUpdating, setIsUpdating] = useState(false);
-
+    const {user} = useUser()
     const handleLogout = () => {
         toast.loading("Signing out...");
         console.log("Logged out");
@@ -45,11 +46,11 @@ const RidersSetting = ({ user }: { user: IAdminUser }) => {
                         {/* Avatar */}
                         <div className="relative mx-auto md:mx-0">
                             <div className="size-28 rounded-2xl border-4 border-white bg-slate-100 overflow-hidden shadow-lg">
-                                {user.image ? (
+                                {user?.image ? (
                                     <Image src={user.image} alt={user.name} fill className="object-cover" />
                                 ) : (
                                     <div className="size-full flex items-center justify-center bg-orange-100 text-orange-600 text-3xl font-black">
-                                        {user.name.charAt(0)}
+                                        {user?.name?.charAt(0)}
                                     </div>
                                 )}
                             </div>
@@ -61,19 +62,19 @@ const RidersSetting = ({ user }: { user: IAdminUser }) => {
                         {/* Info */}
                         <div className="flex-1 text-center md:text-left ">
                             <h2 className="text-2xl font-black text-slate-900">
-                                {user.name}
+                                {user?.name}
                             </h2>
 
                             <div className="inline-flex items-center gap-2 text-xs font-bold text-orange-600 bg-orange-50 px-3 py-1 rounded-lg border border-orange-100">
-                                <ShieldCheck size={14} /> {user.role}
+                                <ShieldCheck size={14} /> {user?.role}
                             </div>
                         </div>
                     </div>
 
                     {/* Info Row */}
                     <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <InfoItem icon={<Mail size={16} />} label="Email" value={user.email} />
-                        <InfoItem icon={<IdCard size={16} />} label="Admin ID" value={`#${user.id.slice(-8)}`} />
+                        <InfoItem icon={<Mail size={16} />} label="Email" value={user?.email} />
+                        <InfoItem icon={<IdCard size={16} />} label="Admin ID" value={`#${user?.id?.slice(-8)}`} />
                     </div>
                 </div>
             </div>

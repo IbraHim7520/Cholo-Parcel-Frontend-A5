@@ -48,6 +48,7 @@ const ROUTES_CONFIG = {
       label: "Management",
       items: [
         { title: "Reviews", url: "/dashboard/reviews", icon: Star },
+        { title: "Notifications", url: "/dashboard/my-notification", icon: Bell },
         { title: "Settings", url: "/dashboard/my-settings", icon: Settings },
       ]
     }
@@ -85,9 +86,9 @@ const ROUTES_CONFIG = {
     {
       label: "Personal",
       items: [
-        { title: "Earnings", url: "/dashboard/rider-earnings", icon: Wallet },
-        { title: "Notifications", url: "/dashboard/rider-notification", icon: Bell },
-        { title: "Settings", url: "/dashboard/settings", icon: Settings },
+        { title: "Earnings", url: "/dashboard/earnings", icon: Wallet },
+        { title: "Notifications", url: "/dashboard/my-notification", icon: Bell },
+        { title: "Settings", url: "/dashboard/rider-settings", icon: Settings },
       ]
     }
   ],

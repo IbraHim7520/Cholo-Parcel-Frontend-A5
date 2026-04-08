@@ -122,3 +122,11 @@ export interface IUser {
   deletedAt: string | null;
 }
 
+export interface IGetNotificationData {
+  title: string,
+  message: string,
+  id: string,
+  target: NotificationTarget,
+  createdAt: string,
+  updatedAt: string,
+}
